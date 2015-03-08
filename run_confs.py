@@ -114,6 +114,7 @@ def run_all_confs():
                                                                     l1_repl, l2_repl)
                                     if conf_params is not None:
                                         run_all_benchmarks_for_one_conf(conf_params)
+                                        time.sleep(5)
 
 
 def run_all_benchmarks_for_one_conf(conf_params):
