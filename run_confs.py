@@ -1,6 +1,7 @@
 __author__ = 'Jun'
 
 from subprocess import Popen
+from multiprocessing import Pool
 import time
 
 NUM_PROCS = 10
@@ -25,7 +26,7 @@ TEST_SET = [
 
 BIG_O = {
     "cc1.alpha": "-O benchmarks/1stmt.i",
-    "anagram.alpha": "../words < benchmarks/anagram.in",
+    "anagram.alpha": BENCHMARK_PATH + "words < benchmarks/anagram.in",
     "go.alpha": "50 9 benchmarks/2stone9.in"
 }
 
@@ -94,6 +95,8 @@ def generate_one_conf(l1_data, l1_inst, l2_data, l2_inst, l1_bsize, l2_bsize, l1
 
 
 def run_all_confs():
+    po = Pool(8)
+    confs = []
 
     for l1_data in CACHE_L1_D:
         # for L1 cache, 0 means unified
@@ -113,8 +116,11 @@ def run_all_confs():
                                                                     l1_way, l2_way,
                                                                     l1_repl, l2_repl)
                                     if conf_params is not None:
-                                        run_all_benchmarks_for_one_conf(conf_params)
-                                        time.sleep(3)
+                                        # po.(run_all_benchmarks_for_one_conf, [conf_params])
+                                        # time.sleep(3)
+                                        confs.append(conf_params)
+    results = po.map(run_all_benchmarks_for_one_conf, confs)
+    print results
 
 
 def run_all_benchmarks_for_one_conf(conf_params):
@@ -126,7 +132,8 @@ def run_all_benchmarks_for_one_conf(conf_params):
         args_to_call = [SIM, "-redir:sim", output] + conf_params.split(" ")\
                        + [case] + BIG_O[test_case].split(" ")
         print " ".join(args_to_call)
-        Popen(args_to_call)
+        p = Popen(args_to_call)
+        p.wait()
 
 
 if __name__ == '__main__':
