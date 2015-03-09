@@ -13,7 +13,7 @@ BENCHMARK_PATH = PROJECT_PATH + "benchmarks/"
 
 SIMPLE_CACHE_PATH = PROJECT_PATH + "simplesim-3.0/"
 
-OUTPUT_DIR = PROJECT_PATH + "output/"
+OUTPUT_DIR = PROJECT_PATH + "outputs/"
 
 SIM = SIMPLE_CACHE_PATH + "sim-cache"
 
@@ -25,7 +25,7 @@ TEST_SET = [
 
 BIG_O = {
     "cc1.alpha": "-O benchmarks/1stmt.i",
-    "anagram.alpha": "words < benchmarks/anagram.in",
+    "anagram.alpha": "../words < benchmarks/anagram.in",
     "go.alpha": "50 9 benchmarks/2stone9.in"
 }
 
@@ -114,7 +114,7 @@ def run_all_confs():
                                                                     l1_repl, l2_repl)
                                     if conf_params is not None:
                                         run_all_benchmarks_for_one_conf(conf_params)
-                                        time.sleep(5)
+                                        time.sleep(3)
 
 
 def run_all_benchmarks_for_one_conf(conf_params):
@@ -123,7 +123,7 @@ def run_all_benchmarks_for_one_conf(conf_params):
         case = BENCHMARK_PATH + test_case
         output = OUTPUT_DIR + conf_params.replace(" ", "")[1:] + "-" + test_case + ".txt"
         count += 1
-        args_to_call = [SIM, "-h", "true", "-redir:sim", output] + conf_params.split(" ")\
+        args_to_call = [SIM, "-redir:sim", output] + conf_params.split(" ")\
                        + [case] + BIG_O[test_case].split(" ")
         print " ".join(args_to_call)
         Popen(args_to_call)
