@@ -40,16 +40,23 @@ def get_test_params(filename):
         shadow_name = one_flag[9:12]
 
         if name != shadow_name and not shadow_name.startswith("ul"):
+            # unified cache, pointer flag
             test_params_dict[name] = test_params_dict[shadow_name]
             test_params_dict[shadow_name] = "u"
             continue
+        elif name != shadow_name and shadow_name.startswith("ul"):
+            # unified cache, parameters about the unified cache
+            test_params_dict[shadow_name] = "u"
+        else:
+            # separate cache
+            test_params_dict[name][0] = "d"
 
-        test_params_dict[name][0] = "d"
+        # fill in the parameters, if it is a unified cache, data cache pointer to instruction cache
         params = one_flag[13:].split(':')
-
         for index, value in enumerate(params):
             test_params_dict[name][index + 1] = value
 
+    # follow this order
     test_params.extend(test_params_dict["il1"])
     test_params.extend(test_params_dict["dl1"])
     test_params.extend(test_params_dict["il2"])
