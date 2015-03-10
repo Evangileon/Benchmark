@@ -25,14 +25,16 @@ def get_test_params(filename):
     """
     Get list of configuration of a given test case identified by file name
     :param filename: output file name
-    :return: list of parameters
+    :return: list of parameters, second value indicate unified cache,
+            0 for no unified cache, 1 for L1 unified, 2 for L2 unified, 3 for both
     """
     file_params = filename.split("-")
 
     if len(file_params) != 7:
-        return None
+        return None, None
 
     test_params = []
+    unified_flag = 0
     test_params_dict = {"dl1": 5 * [""], "il1": 5 * [""], "dl2": 5 * [""], "il2": 5 * [""]}
 
     for one_flag in file_params[0:4]:
@@ -47,6 +49,7 @@ def get_test_params(filename):
         elif name != shadow_name and shadow_name.startswith("ul"):
             # unified cache, parameters about the unified cache
             test_params_dict[name][0] = "u"
+            unified_flag += int(name[:-1])
         else:
             # separate cache
             test_params_dict[name][0] = "d"
@@ -65,7 +68,7 @@ def get_test_params(filename):
     benchmark_name = file_params[6][:-4]
     test_params.append(benchmark_name)
 
-    return test_params
+    return test_params, unified_flag
 
 
 def run_all_processes():
@@ -74,13 +77,17 @@ def run_all_processes():
     :return: nothing
     """
     if len(sys.argv) < 3:
-        print "python post_process.py outputs_dir csv_file"
+        print "python post_process.py outputs_dir csv_file <unprocessed_files_list>"
         sys.exit(0)
+
+    unprocessed_list_filename = "unprocessed_files.txt"
+    if len(sys.argv) > 3:
+        unprocessed_list_filename = sys.argv[3]
 
     outputs_dir = sys.argv[1]
     csv_file = open(sys.argv[2], 'wb')
     csv_writer = csv.writer(csv_file)
-    unprocessed_list_file = open("unprocessed_files.txt", 'w')
+    unprocessed_list_file = open(unprocessed_list_filename, 'w')
 
     metric_titles = ['sim_num_insn', 'sim_num_refs', 'sim_elapsed_time', 'sim_inst_rate', 'il1.accesses', 'il1.hits',
                      'il1.misses', 'il1.replacements', 'il1.writebacks', 'il1.invalidations', 'il1.miss_rate',
@@ -105,13 +112,32 @@ def run_all_processes():
 
     for filename in os.listdir(outputs_dir):
         file_relative_path = os.path.join(outputs_dir, filename)
-        test_params = get_test_params(filename)
+        test_params, unified_flag = get_test_params(filename)
 
         if test_params is None:
             continue
 
         f = open(file_relative_path, 'rb')
-        lines = file_tail(f, 58)
+
+        num_lines_to_read = 58
+        if unified_flag == 1 or unified_flag == 2:
+            # either L1 or L2 is unified
+            num_lines_to_read -= 10
+        elif unified_flag == 3:
+            # both L1 and L2 are unified
+            num_lines_to_read -= 2 * 10
+
+        # lines read from output files, length may vary due to number of unified caches
+        lines = file_tail(f, num_lines_to_read)
+
+        # padding with empty string when it has unified caches
+        if unified_flag == 1:
+            lines.insert(4, 10 * [""])
+        elif unified_flag == 2:
+            lines.insert(24, 10 * [""])
+        elif unified_flag == 3:
+            lines.insert(4, 10 * [""])
+            lines.insert(24, 10 * [""])
 
         if lines is None:
             unprocessed_list_file.write(filename + "\n")
