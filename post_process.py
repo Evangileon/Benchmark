@@ -42,11 +42,11 @@ def get_test_params(filename):
         if name != shadow_name and not shadow_name.startswith("ul"):
             # unified cache, pointer flag
             test_params_dict[name] = test_params_dict[shadow_name]
-            test_params_dict[shadow_name] = "u"
+            test_params_dict[shadow_name][0] = "u"
             continue
         elif name != shadow_name and shadow_name.startswith("ul"):
             # unified cache, parameters about the unified cache
-            test_params_dict[shadow_name] = "u"
+            test_params_dict[name][0] = "u"
         else:
             # separate cache
             test_params_dict[name][0] = "d"
