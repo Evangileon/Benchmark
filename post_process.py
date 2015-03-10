@@ -6,6 +6,19 @@ import re
 import csv
 
 
+def inject_list_as_items(target_list, start_index, list_to_inject):
+    """
+    Inject a list to another list as items rather than list
+    :param target_list: to be injected
+    :param start_index: start index in target_list
+    :param list_to_inject: inject this to target_list
+    :return: new list
+    """
+    list1 = target_list[:start_index]
+    list2 = target_list[start_index:]
+    return list1 + list_to_inject + list2
+
+
 def file_tail(f, num_lines=20):
     """
     Empty lines are not considered
@@ -131,21 +144,22 @@ def run_all_processes():
         # lines read from output files, length may vary due to number of unified caches
         lines = file_tail(f, num_lines_to_read)
 
-        # padding with empty string when it has unified caches
-        if unified_flag == 1:
-            lines.insert(4, 10 * [""])
-        elif unified_flag == 2:
-            lines.insert(24, 10 * [""])
-        elif unified_flag == 3:
-            lines.insert(4, 10 * [""])
-            lines.insert(24, 10 * [""])
-
         # add file names which are invalid outputs to unprocessed list file
         if lines is None:
             unprocessed_list_file.write(filename + "\n")
             continue
 
+        # padding with empty string when it has unified caches
+        if unified_flag == 1:
+            lines = inject_list_as_items(lines, 4, 10 * [""])
+        elif unified_flag == 2:
+            lines = inject_list_as_items(lines, 24, 10 * [""])
+        elif unified_flag == 3:
+            lines = inject_list_as_items(lines, 4, 10 * [""])
+            lines = inject_list_as_items(lines, 24, 10 * [""])
+
         test_metrics = ["" if re.match(r'^\s*$', line) else line.split()[1] for line in lines]
+
         csv_writer.writerow(test_params + test_metrics)
         print filename + " processed"
         count += 1
