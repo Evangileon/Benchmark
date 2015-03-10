@@ -55,8 +55,10 @@ def get_test_params(filename):
         for index, value in enumerate(params):
             test_params_dict[name][index + 1] = value
 
-    for key, value in test_params_dict.iteritems():
-        test_params.extend(value)
+    test_params.extend(test_params_dict["il1"])
+    test_params.extend(test_params_dict["dl1"])
+    test_params.extend(test_params_dict["il2"])
+    test_params.extend(test_params_dict["dl2"])
 
     benchmark_name = file_params[6][:-4]
     test_params.append(benchmark_name)

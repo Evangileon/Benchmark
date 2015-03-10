@@ -2,7 +2,7 @@ __author__ = 'Jun'
 
 from subprocess import Popen
 from multiprocessing import Pool
-import time
+import sys
 
 NUM_PROCS = 10
 
@@ -88,7 +88,7 @@ def generate_one_conf(l1_data, l1_inst, l2_data, l2_inst, l1_bsize, l2_bsize, l1
         l2_inst_flags = "-cache:il2 il2:" + ":".join(str(e) for e in [l2_i_nsets, l2_bsize, l2_way, l2_repl])
         l2_data_flags = "-cache:dl2 dl2:" + ":".join(str(e) for e in [l2_d_nsets, l2_bsize, l2_way, l2_repl])
 
-    command_line = " ".join(str(e) for e in [l1_data_flags, l1_inst_flags, l2_data_flags, l2_inst_flags])
+    command_line = " ".join(str(e) for e in [l1_inst_flags, l1_data_flags, l2_inst_flags, l2_data_flags])
     command_line += " " + "-tlb:itlb none -tlb:dtlb none"
 
     return command_line
@@ -129,12 +129,14 @@ def run_all_benchmarks_for_one_conf(conf_params):
         case = BENCHMARK_PATH + test_case
         output = OUTPUT_DIR + conf_params.replace(" ", "")[1:] + "-" + test_case + ".txt"
         count += 1
-        args_to_call = [SIM, "-redir:sim", output] + conf_params.split(" ")\
-                       + [case] + BIG_O[test_case].split(" ")
+        args_to_call = [SIM, "-redir:sim", output] + conf_params.split(" ") + [case] + BIG_O[test_case].split(" ")
         print " ".join(args_to_call)
         p = Popen(args_to_call)
         p.wait()
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        OUTPUT_DIR = sys.argv[1]
+
     run_all_confs()
