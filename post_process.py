@@ -49,7 +49,7 @@ def get_test_params(filename):
         elif name != shadow_name and shadow_name.startswith("ul"):
             # unified cache, parameters about the unified cache
             test_params_dict[name][0] = "u"
-            unified_flag += int(name[:-1])
+            unified_flag += int(name[-1:])
         else:
             # separate cache
             test_params_dict[name][0] = "d"
@@ -65,6 +65,7 @@ def get_test_params(filename):
     test_params.extend(test_params_dict["il2"])
     test_params.extend(test_params_dict["dl2"])
 
+    # append benchmark name
     benchmark_name = file_params[6][:-4]
     test_params.append(benchmark_name)
 
@@ -139,11 +140,12 @@ def run_all_processes():
             lines.insert(4, 10 * [""])
             lines.insert(24, 10 * [""])
 
+        # add file names which are invalid outputs to unprocessed list file
         if lines is None:
             unprocessed_list_file.write(filename + "\n")
             continue
 
-        test_metrics = [line.split()[1] for line in lines]
+        test_metrics = ["" if re.match(r'^\s*$', line) else line.split()[1] for line in lines]
         csv_writer.writerow(test_params + test_metrics)
         print filename + " processed"
         count += 1
