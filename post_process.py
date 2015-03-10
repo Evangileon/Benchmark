@@ -91,10 +91,10 @@ def run_all_processes():
                      'ld_text_base', 'ld_text_size', 'ld_data_base', 'ld_data_size', 'ld_stack_base', 'ld_stack_size',
                      'ld_prog_entry', 'ld_environ_base', 'ld_target_big_endian', 'mem.page_count', 'mem.page_mem',
                      'mem.ptab_misses', 'mem.ptab_accesses', 'mem.ptab_miss_rate']
-    conf_titles = ['L1 Data Unified', 'L1 Data nsets', 'L1 Data bsize', 'L1 Data ways', 'L1 Data repl',
-                   'L1 Inst Unified', 'L1 Inst nsets', 'L1 Inst bsize', 'L1 Inst ways', 'L1 Inst repl',
-                   'L2 Data Unified', 'L2 Data nsets', 'L2 Data bsize', 'L2 Data ways', 'L2 Data repl',
+    conf_titles = ['L1 Inst Unified', 'L1 Inst nsets', 'L1 Inst bsize', 'L1 Inst ways', 'L1 Inst repl',
+                   'L1 Data Unified', 'L1 Data nsets', 'L1 Data bsize', 'L1 Data ways', 'L1 Data repl',
                    'L2 Inst Unified', 'L2 Inst nsets', 'L2 Inst bsize', 'L2 Inst ways', 'L2 Inst repl',
+                   'L2 Data Unified', 'L2 Data nsets', 'L2 Data bsize', 'L2 Data ways', 'L2 Data repl',
                    'Benchmark Name']
 
     csv_writer.writerow(conf_titles + metric_titles)
