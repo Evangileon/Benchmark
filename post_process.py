@@ -39,14 +39,9 @@ def get_test_params(filename):
         name = one_flag[6:9]
         shadow_name = one_flag[9:12]
 
-        if name == "dl1" and shadow_name == "ul1":
-            test_params_dict["dll"] = test_params_dict["il1"]
-            test_params_dict["il1"][0] = "u"
-            continue
-
-        if name == "dl2" and shadow_name == "ul2":
-            test_params_dict["dl2"] = test_params_dict["il2"]
-            test_params_dict["il2"][0] = "u"
+        if name != shadow_name and not shadow_name.startswith("ul"):
+            test_params_dict[name] = test_params_dict[shadow_name]
+            test_params_dict[shadow_name] = "u"
             continue
 
         test_params_dict[name][0] = "d"
