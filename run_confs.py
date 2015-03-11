@@ -91,7 +91,7 @@ def generate_one_conf(l1_data, l1_inst, l2_data, l2_inst, l1_bsize, l2_bsize, l1
         l2_inst_flags = "-cache:il2 il2:" + ":".join(str(e) for e in [l2_i_nsets, l2_bsize, l2_way, l2_repl])
         l2_data_flags = "-cache:dl2 dl2:" + ":".join(str(e) for e in [l2_d_nsets, l2_bsize, l2_way, l2_repl])
 
-    if l1_data == 0 and l2_data == 0:
+    if l1_inst == 0 and l2_inst == 0:
         # L1, L2 both are unified
         l2_inst_flags = "-cache:il2 none"
         command_line = " ".join(str(e) for e in [l1_inst_flags, l1_data_flags, l2_data_flags, l2_inst_flags])
