@@ -39,7 +39,7 @@ CACHE_L2_D = [512, 1024]
 CACHE_SEPARATE_BOUND = 0.1  # both upper bound and lower bound are 10% of available
 CACHE_SEPARATE_SAMPLES = 128  # add 0.01 * available to next configuration
 
-WAYS = [1, 2, 3, 4]
+WAYS = [1, 2, 4]
 BLOCK_SIZES = [32, 64]
 
 REPLACE_POLICIES = ["l", "f", "r"]

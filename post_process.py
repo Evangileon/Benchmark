@@ -153,10 +153,10 @@ def run_all_processes():
         if unified_flag == 1:
             lines = inject_list_as_items(lines, 4, 10 * [""])
         elif unified_flag == 2:
-            lines = inject_list_as_items(lines, 24, 10 * [""])
+            lines = inject_list_as_items(lines, 14, 10 * [""])
         elif unified_flag == 3:
             lines = inject_list_as_items(lines, 4, 10 * [""])
-            lines = inject_list_as_items(lines, 24, 10 * [""])
+            lines = inject_list_as_items(lines, 14, 10 * [""])
 
         test_metrics = ["" if re.match(r'^\s*$', line) else line.split()[1] for line in lines]
 
