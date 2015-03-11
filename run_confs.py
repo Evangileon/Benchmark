@@ -72,23 +72,32 @@ def generate_one_conf(l1_data, l1_inst, l2_data, l2_inst, l1_bsize, l2_bsize, l1
     if l1_data == 0:
         return None
     elif l1_inst == 0:
-        # unified
+        # L1 unified
         l1_inst_flags = "-cache:il1 dl1"
         l1_data_flags = "-cache:dl1 ul1:" + ":".join(str(e) for e in [l1_d_nsets, l1_bsize, l1_way, l1_repl])
     else:
+        # L1 separate
         l1_inst_flags = "-cache:il1 il1:" + ":".join(str(e) for e in [l1_i_nsets, l1_bsize, l1_way, l1_repl])
         l1_data_flags = "-cache:dl1 dl1:" + ":".join(str(e) for e in [l1_d_nsets, l1_bsize, l1_way, l1_repl])
 
     if l2_data == 0:
         return None
     elif l2_inst == 0:
+        # L2 unified
         l2_inst_flags = "-cache:il2 dl2"
         l2_data_flags = "-cache:dl2 ul2:" + ":".join(str(e) for e in [l2_d_nsets, l2_bsize, l2_way, l2_repl])
     else:
+        # L2 separate
         l2_inst_flags = "-cache:il2 il2:" + ":".join(str(e) for e in [l2_i_nsets, l2_bsize, l2_way, l2_repl])
         l2_data_flags = "-cache:dl2 dl2:" + ":".join(str(e) for e in [l2_d_nsets, l2_bsize, l2_way, l2_repl])
 
-    command_line = " ".join(str(e) for e in [l1_inst_flags, l1_data_flags, l2_inst_flags, l2_data_flags])
+    if l1_data == 0 and l2_data == 0:
+        # L1, L2 both are unified
+        l2_inst_flags = "-cache:il2 none"
+        command_line = " ".join(str(e) for e in [l1_inst_flags, l1_data_flags, l2_data_flags, l2_inst_flags])
+    else:
+        command_line = " ".join(str(e) for e in [l1_inst_flags, l1_data_flags, l2_inst_flags, l2_data_flags])
+
     command_line += " " + "-tlb:itlb none -tlb:dtlb none"
 
     return command_line
